@@ -9,5 +9,6 @@ routes.get('/', function(req, res) {
 })
 
 routes.get('/projects', ProjectController.index);
+routes.post('/projects', ProjectController.store);
 
 export default routes;

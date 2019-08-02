@@ -5,6 +5,13 @@ class ProjectController {
         const projects = await Project.find();
         return res.json(projects);
     }
+
+    async store(req, res) {
+        const { body } = req;
+        const project = await Project.create(body);
+        return res.json(project)
+
+    }
 }
 
 export default new ProjectController();
