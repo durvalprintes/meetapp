@@ -5,6 +5,7 @@ import dbConfig from './config/database';
 
 class App {
   constructor() {
+    this.count = 0;
     this.express = express();
     this.database();
     this.middlewares();
@@ -20,6 +21,11 @@ class App {
 
   middlewares() {
     this.express.use(express.json());
+    this.express.use((req, res, next) => {
+      this.count += 1;  
+      console.log(`Req#${this.count}`);
+      next();
+    });
   }
 
   routes() {

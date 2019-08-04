@@ -13,14 +13,8 @@ const ProjectSchema = new Schema({
         type: [String],
         required: false
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    },
+}, {
+    timestamps: true
 });
 
 export default model('Project', ProjectSchema);
