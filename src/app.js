@@ -14,16 +14,14 @@ class App {
 
   database() {
     mongoose.connect(dbConfig.uri, {
-      useCreateIndex: true,
       useNewUrlParser: true
     });
   }
 
   middlewares() {
     this.express.use(express.json());
-    this.express.use((req, res, next) => {
-      this.count += 1;  
-      console.log(`Req#${this.count}`);
+    this.express.use((req, res, next) => {  
+      console.log(`Req#${++this.count}`);
       next();
     });
   }

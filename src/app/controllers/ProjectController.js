@@ -17,13 +17,13 @@ class ProjectController {
     }    
 
     async store(req, res) {
-        const { body } = req;
-        const project = await Project.create(body);
+        const project = await Project.create(req.body);
         return res.json(project);
     }
 
     async update(req, res) {
-        const project = await Project.findOneAndUpdate({ "id" : req.params.id }, req.body, { new: true });
+        const { title } = req.body;
+        const project = await Project.findOneAndUpdate({ "id" : req.params.id }, { title }, { new: true });
         return res.json(project);
     }
 
