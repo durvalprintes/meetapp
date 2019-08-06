@@ -13,13 +13,13 @@ class App {
   }
 
   database() {
-    mongoose
+    this.connection = mongoose
       .connect(dbConfig.uri, {
         useNewUrlParser: true,
         useCreateIndex: true,
         useFindAndModify: false,
       })
-      .then(() => console.log('MongoDB Connected...'))
+      .then(() => console.log('Database is connected...'))
       .catch(err => console.log(err));
   }
 
