@@ -1,5 +1,5 @@
 import express from 'express';
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 import routes from './routes';
 import dbConfig from './config/database';
 
@@ -13,16 +13,20 @@ class App {
   }
 
   database() {
-    mongoose.connect(dbConfig.uri, {
-      useFindAndModify:false,
-      useNewUrlParser: true
-    });
+    mongoose
+      .connect(dbConfig.uri, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+      })
+      .then(() => console.log('MongoDB Connected...'))
+      .catch(err => console.log(err));
   }
 
   middlewares() {
     this.express.use(express.json());
-    this.express.use((req, res, next) => {  
-      console.log(`Req#${++this.count}`);
+    this.express.use((req, res, next) => {
+      console.log(`Req#${(this.count += 1)}`);
       next();
     });
   }
@@ -30,7 +34,6 @@ class App {
   routes() {
     this.express.use(routes);
   }
-
 }
 
 export default new App().express;
