@@ -1,39 +1,26 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import routes from './routes';
-import dbConfig from './config/database';
+import User from './app/models/user';
 
 class App {
   constructor() {
-    this.count = 0;
-    this.express = express();
-    this.database();
+    this.server = express();
     this.middlewares();
     this.routes();
   }
 
-  database() {
-    this.connection = mongoose
-      .connect(dbConfig.uri, {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-      })
-      .then(() => console.log('Database is connected...'))
-      .catch(err => console.log(err));
-  }
-
   middlewares() {
-    this.express.use(express.json());
-    this.express.use((req, res, next) => {
-      console.log(`Req#${(this.count += 1)}`);
-      next();
-    });
+    this.server.use(express.json());
   }
 
   routes() {
-    this.express.use(routes);
+    this.user = new User({
+      name: 'Durval',
+      email: 'durvalprintes@gmail.com.br',
+      password: '123456',
+    });
+    this.server.use(routes);
   }
 }
 
-export default new App().express;
+export default new App().server;
