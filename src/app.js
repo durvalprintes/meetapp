@@ -1,6 +1,5 @@
 import express from 'express';
 import routes from './routes';
-import User from './app/models/user';
 
 class App {
   constructor() {
@@ -14,11 +13,6 @@ class App {
   }
 
   routes() {
-    this.user = new User({
-      name: 'Durval',
-      email: 'durvalprintes@gmail.com.br',
-      password: '123456',
-    });
     this.server.use(routes);
   }
 }
