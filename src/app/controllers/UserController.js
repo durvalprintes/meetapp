@@ -16,8 +16,8 @@ class UserController {
   }
 
   async store(req, res) {
-    const { id, name, email, password } = await User.create(req.body);
-    return res.json({ id, name, email, password });
+    const { id, name, email } = await User.create(req.body);
+    return res.json({ id, name, email });
   }
 
   async show(req, res) {
@@ -27,12 +27,12 @@ class UserController {
 
   async edit(req, res) {
     const { id } = req.params;
-    const { name, email, password } = await User.update(req.body, {
+    const { name, email } = await User.update(req.body, {
       where: { id },
       returning: true,
       plain: true,
     });
-    return res.json({ id, name, email, password });
+    return res.json({ id, name, email });
   }
 
   async remove(req, res) {

@@ -16,7 +16,7 @@ export default {
         type: Sequelize.STRING,
         unique: true,
       },
-      password: {
+      password_hash: {
         allowNull: false,
         type: Sequelize.STRING,
       },
