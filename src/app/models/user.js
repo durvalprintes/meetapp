@@ -1,5 +1,5 @@
 import Sequelize, { Model } from 'sequelize';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 class User extends Model {
   static init(sequelize) {
@@ -10,8 +10,21 @@ class User extends Model {
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
       },
-      { sequelize },
+      {
+        hooks: {
+          beforeSave: user => {
+            if (user.password) {
+              user.password_hash = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
+            }
+          },
+        },
+        sequelize,
+      },
     );
+  }
+
+  checkPassword(password) {
+    return bcrypt.compareSync(password, this.password_hash);
   }
 }
 

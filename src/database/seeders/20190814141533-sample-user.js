@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 export default {
   async up(queryInterface) {
     await queryInterface.bulkInsert(
@@ -6,7 +8,7 @@ export default {
         {
           name: 'Teste',
           email: 'teste@testando.com',
-          password: '123456',
+          password_hash: bcrypt.hashSync('123456', bcrypt.genSaltSync()),
           created_at: new Date(),
           updated_at: new Date(),
         },

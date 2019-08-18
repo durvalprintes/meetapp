@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
-import { promisify } from 'util';
 
 import key from '../../config/key';
 
-export default async (req, res, next) => {
+export default (req, res, next) => {
   const auth = req.headers.authorization;
   if (!auth) {
     return res.status(403).json({ error: 'No authorization found!' });
@@ -14,14 +13,11 @@ export default async (req, res, next) => {
     return res.status(401).json({ error: 'No token found!' });
   }
 
-  const decoded = await promisify(jwt.verify)(token, key.secret)
-    .then(() => {
-      req.userId = decoded.id;
-      next();
-    })
-    .catch(() => {
-      res.status(401).json({ error: 'Token is not valid!' });
-    });
-
-  next();
+  try {
+    const decoded = jwt.verify(token, key.secret);
+    req.loginUserId = decoded.id;
+    return next();
+  } catch (e) {
+    return res.status(401).json({ error: 'Token is not valid!' });
+  }
 };

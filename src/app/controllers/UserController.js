@@ -5,7 +5,7 @@ class UserController {
   async check(req, res, next) {
     const user = await User.findByPk(req.params.id);
     if (!user) {
-      return res.status(400).json({ data: 'User not found' });
+      return res.status(400).json({ error: 'User not found!' });
     }
     return next();
   }
@@ -29,8 +29,6 @@ class UserController {
     const { id } = req.params;
     const { name, email } = await User.update(req.body, {
       where: { id },
-      returning: true,
-      plain: true,
     });
     return res.json({ id, name, email });
   }
