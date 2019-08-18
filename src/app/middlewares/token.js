@@ -15,7 +15,7 @@ export default (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, key.secret);
-    req.loginUserId = decoded.id;
+    req.tokenUserId = decoded.id;
     return next();
   } catch (e) {
     return res.status(401).json({ error: 'Token is not valid!' });
