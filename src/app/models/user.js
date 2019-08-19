@@ -14,7 +14,7 @@ class User extends Model {
         hooks: {
           beforeSave: user => {
             if (user.password) {
-              user.password_hash = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
+              user.password_hash = bcrypt.hashSync(user.password, 8);
             }
           },
         },
