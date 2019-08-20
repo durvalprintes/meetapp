@@ -1,9 +1,14 @@
 import { Router } from 'express';
+import multer from 'multer';
+import uploadConfig from './config/upload';
+
+import Token from './app/middlewares/Token';
 import UserController from './app/controllers/UserController';
 import LoginController from './app/controllers/LoginController';
-import Token from './app/middlewares/Token';
+import FileController from './app/controllers/FileController';
 
 const routes = Router();
+const upload = multer(uploadConfig);
 
 routes.get('/', (req, res) => res.json({ mensagem: 'Aplicação Meetup!' }));
 
@@ -19,5 +24,7 @@ routes.use(Token);
 routes.get('/users/:id', UserController.show);
 routes.put('/users/:id', UserController.edit);
 routes.delete('/users/:id', UserController.remove);
+
+routes.post('/files', upload.single('file'), FileController);
 
 export default routes;

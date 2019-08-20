@@ -1,4 +1,6 @@
 src/config/*
+!src/config/upload.js
 node_modules/
+uploads/*
 *lock*
 *.log
