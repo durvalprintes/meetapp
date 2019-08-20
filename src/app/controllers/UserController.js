@@ -24,7 +24,7 @@ class UserController {
         .required(),
       password: Yup.string()
         .min(6)
-        .required('Password not found!'),
+        .required(),
     });
 
     try {
@@ -49,15 +49,21 @@ class UserController {
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
+      password: Yup.string().min(6),
+      passwordConfirmation: Yup.string().when('password', (password, field) =>
+        password
+          ? field.required().oneOf([Yup.ref('password')], 'Password confirmation do not match!')
+          : field,
+      ),
       oldPassword: Yup.string()
         .min(6)
-        .when('password', (password, field) => (password ? field.required() : field)),
-      password: Yup.string()
-        .min(6)
-        .notOneOf([Yup.ref('oldPassword')]),
-      passwordConfirmation: Yup.string().when('oldPassword', (oldPassword, field) =>
-        oldPassword ? field.required().oneOf([Yup.ref('password')]) : field,
-      ),
+        .when('passwordConfirmation', (passwordConfirmation, field) =>
+          passwordConfirmation
+            ? field
+                .required()
+                .notOneOf([Yup.ref('password')], 'New password must be different from old!')
+            : field,
+        ),
     });
 
     try {

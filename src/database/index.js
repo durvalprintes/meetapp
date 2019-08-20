@@ -6,19 +6,19 @@ const models = [User];
 
 class Database {
   constructor() {
-    this.init();
-  }
-
-  init() {
     this.connection = new Sequelize(dbConfig);
     this.connection
       .authenticate()
       .then(() => {
         console.log('Connection has been established successfully.');
       })
-      .catch(err => {
-        console.error('Unable to connect to the database:', err);
+      .catch(e => {
+        console.error('Unable to connect to the database:', e);
       });
+    this.init();
+  }
+
+  init() {
     models.map(model => model.init(this.connection));
   }
 }
