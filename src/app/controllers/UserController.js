@@ -3,7 +3,7 @@ import User from '../models/User';
 
 class UserController {
   async check(req, res, next) {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findByPk(req.params.user);
     if (!user) {
       return res.status(400).json({ error: 'User not found!' });
     }
