@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
 import File from '../models/File';
+import User from '../models/User';
 
 class MeetupController {
   async check(req, res, next) {
@@ -16,7 +17,22 @@ class MeetupController {
   }
 
   async index(req, res) {
-    const meetups = await Meetup.findAll({ where: { user_id: req.tokenUserId } });
+    const meetups = await Meetup.findAll({
+      where: { user_id: req.tokenUserId },
+      attributes: ['id', 'title', 'description', 'location', 'date'],
+      include: [
+        {
+          model: File,
+          as: 'banner',
+          attributes: ['id', 'path', 'url'],
+        },
+        {
+          model: User,
+          as: 'host',
+          attributes: ['id', 'name', 'email'],
+        },
+      ],
+    });
     return res.json(meetups);
   }
 

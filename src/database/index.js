@@ -3,8 +3,9 @@ import dbConfig from '../config/database';
 import User from '../app/models/User';
 import File from '../app/models/File';
 import Meetup from '../app/models/Meetup';
+import Signup from '../app/models/Signup';
 
-const models = [User, File, Meetup];
+const models = [User, File, Meetup, Signup];
 
 class Database {
   constructor() {

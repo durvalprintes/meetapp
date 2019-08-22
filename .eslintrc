@@ -16,7 +16,11 @@
   "rules": {
     "prettier/prettier": ["error"],
     "no-console": "off",
-    "no-param-reassign": ["error", {"props": false}],
-    "class-methods-use-this": ["error", {"exceptMethods": ["check", "index", "store", "show", "edit", "remove"]}]
+    "camelcase": "off",
+    "no-param-reassign": ["error", { "props": false }],
+    "class-methods-use-this": [
+      "error",
+      { "exceptMethods": ["check", "index", "store", "show", "edit", "remove"] }
+    ]
   }
 }
