@@ -1,24 +1,38 @@
-import * as Yup from 'yup';
 import { Op } from 'sequelize';
+import * as Yup from 'yup';
+import { startOfDay, endOfDay, parseISO } from 'date-fns';
+
 import Meetup from '../models/Meetup';
 import File from '../models/File';
 import User from '../models/User';
 
 class MeetupController {
   async check(req, res, next) {
-    const meetup = await Meetup.findOne({
-      where: { id: req.params.meetup, user_id: req.tokenUserId, date: { [Op.gt]: new Date() } },
-    });
+    const meetup = await Meetup.findByPk(req.params.meetup);
     if (!meetup) {
-      return res.status(400).json({ error: 'Meetup has already passed or not allowed!' });
+      return res.status(400).json({ error: 'Meetup not exists!' });
     }
+
+    if (meetup.date < new Date()) {
+      return res.status(400).json({ error: 'Meetup has already passed!' });
+    }
+
     req.meetup = meetup;
+    req.isHost = meetup.user_id === req.tokenUserId;
     return next();
   }
 
   async index(req, res) {
+    const { date, page = 1 } = req.query;
+
+    const dtStart = startOfDay(parseISO(date));
+    const dtEnd = endOfDay(parseISO(date));
+
     const meetups = await Meetup.findAll({
-      where: { user_id: req.tokenUserId },
+      where: {
+        user_id: req.tokenUserId,
+        date: { [Op.between]: [dtStart, dtEnd] },
+      },
       attributes: ['id', 'title', 'description', 'location', 'date'],
       include: [
         {
@@ -32,6 +46,8 @@ class MeetupController {
           attributes: ['id', 'name', 'email'],
         },
       ],
+      limit: 1,
+      offset: (page - 1) * 1,
     });
     return res.json(meetups);
   }
@@ -77,6 +93,10 @@ class MeetupController {
       return res.status(400).json({ error: e.message });
     }
 
+    if (!req.isHost) {
+      return res.status(400).json({ error: 'User is not the Meetups Host!' });
+    }
+
     if (req.body.file_id && !(await File.findByPk(req.body.file_id))) {
       return res.status(400).json({ error: 'File not found!' });
     }
@@ -86,6 +106,10 @@ class MeetupController {
   }
 
   async remove(req, res) {
+    if (!req.isHost) {
+      return res.status(400).json({ error: 'User is not the Meetups Host!' });
+    }
+
     await req.meetup.destroy();
     return res.json({ msg: 'Ok' });
   }

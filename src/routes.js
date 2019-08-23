@@ -27,7 +27,7 @@ routes.put('/users/:user', UserController.edit);
 routes.delete('/users/:user', UserController.remove);
 
 routes.get('/files', FileController.index);
-routes.post('/files', upload.single('file'), FileController.store);
+routes.post('/files', upload.single('banner'), FileController.store);
 
 routes.param('meetup', MeetupController.check);
 routes.get('/meetups', MeetupController.index);
