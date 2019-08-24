@@ -32,6 +32,6 @@ export default async (req, res) => {
   const { id, name } = user;
   return res.json({
     user: { id, name, email },
-    token: jwt.sign({ id }, key.secret, { expiresIn: key.expires }),
+    token: jwt.sign({ id, name, email }, key.secret, { expiresIn: key.expires }),
   });
 };

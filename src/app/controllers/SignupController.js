@@ -1,11 +1,14 @@
 import { Op } from 'sequelize';
+
 import Signup from '../models/Signup';
 import Meetup from '../models/Meetup';
+
+import Mail from '../../lib/Mail';
 
 class SignupController {
   async index(req, res) {
     const signups = await Signup.findAll({
-      where: { user_id: req.tokenUserId },
+      where: { user_id: req.tokenUser.id },
       attributes: ['id'],
       include: [
         {
@@ -21,9 +24,16 @@ class SignupController {
 
   async store(req, res) {
     const {
-      tokenUserId: user_id,
+      tokenUser: { id: user_id },
       meetup: {
-        dataValues: { id: meetup_id, date },
+        dataValues: {
+          id: meetup_id,
+          title,
+          date,
+          host: {
+            dataValues: { name, email },
+          },
+        },
       },
     } = req;
 
@@ -36,7 +46,7 @@ class SignupController {
     }
 
     const meetups = await Signup.findAll({
-      where: { user_id: req.tokenUserId },
+      where: { user_id },
       include: [
         {
           model: Meetup,
@@ -50,8 +60,14 @@ class SignupController {
       return res.status(400).json({ error: 'Meetup with conflict date!' });
     }
 
+    await Mail.sendMail({
+      to: `${name}<${email}>`,
+      subject: `Nova inscrição para o(a) ${title}`,
+      text: `Olá, ${name}! O usuário ${req.tokenUser.name} está inscrito. Entre em contato pelo email ${req.tokenUser.email}.`,
+    });
+
     const signup = await Signup.create({ user_id, meetup_id });
-    return res.json({ signup });
+    return res.json(signup);
   }
 }
 

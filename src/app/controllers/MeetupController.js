@@ -8,7 +8,9 @@ import User from '../models/User';
 
 class MeetupController {
   async check(req, res, next) {
-    const meetup = await Meetup.findByPk(req.params.meetup);
+    const meetup = await Meetup.findByPk(req.params.meetup, {
+      include: [{ model: User, as: 'host' }],
+    });
     if (!meetup) {
       return res.status(400).json({ error: 'Meetup not exists!' });
     }
@@ -18,7 +20,7 @@ class MeetupController {
     }
 
     req.meetup = meetup;
-    req.isHost = meetup.user_id === req.tokenUserId;
+    req.isHost = meetup.user_id === req.tokenUser.id;
     return next();
   }
 
@@ -30,7 +32,7 @@ class MeetupController {
 
     const meetups = await Meetup.findAll({
       where: {
-        user_id: req.tokenUserId,
+        user_id: req.tokenUser.id,
         date: { [Op.between]: [dtStart, dtEnd] },
       },
       attributes: ['id', 'title', 'description', 'location', 'date'],
@@ -73,7 +75,7 @@ class MeetupController {
       return res.status(400).json({ error: 'File not found!' });
     }
 
-    req.body.user_id = req.tokenUserId;
+    req.body.user_id = req.tokenUser.id;
     const meetup = await Meetup.create(req.body);
     return res.json(meetup);
   }
