@@ -24,14 +24,14 @@ class SignupController {
 
   async store(req, res) {
     const {
-      tokenUser: { id: user_id },
+      tokenUser: { id: user_id, name: user_name, email: user_email },
       meetup: {
         dataValues: {
           id: meetup_id,
           title,
           date,
           host: {
-            dataValues: { name, email },
+            dataValues: { name: host_name, email: host_email },
           },
         },
       },
@@ -61,9 +61,15 @@ class SignupController {
     }
 
     await Mail.sendMail({
-      to: `${name}<${email}>`,
-      subject: `Nova inscrição para o(a) ${title}`,
-      text: `Olá, ${name}! O usuário ${req.tokenUser.name} está inscrito. Entre em contato pelo email ${req.tokenUser.email}.`,
+      to: `${host_name}<${host_email}>`,
+      subject: `Nova inscrição para ${title}`,
+      template: 'signup_template',
+      context: {
+        host_name,
+        user_name,
+        user_email,
+      },
+      text: `Olá, ${host_name}! O usuário ${user_name} está inscrito. Entre em contato pelo email ${user_email}. Equipe Meetapp.`,
     });
 
     const signup = await Signup.create({ user_id, meetup_id });
