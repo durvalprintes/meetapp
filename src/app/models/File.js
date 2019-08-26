@@ -16,6 +16,10 @@ class File extends Model {
       { sequelize },
     );
   }
+
+  static associate(models) {
+    this.hasOne(models.Meetup);
+  }
 }
 
 export default File;

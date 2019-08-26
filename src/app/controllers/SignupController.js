@@ -13,26 +13,23 @@ class SignupController {
       include: [
         {
           model: Meetup,
-          as: 'meetup',
           attributes: ['id', 'title', 'description', 'location', 'date'],
+          where: { date: { [Op.gt]: new Date() } },
+          required: true,
         },
       ],
-      order: [[{ model: Meetup, as: 'meetup' }, 'date', 'DESC']],
+      order: [[Meetup, 'date']],
     });
-    return res.json({ signups });
+    return res.json(signups);
   }
 
   async store(req, res) {
     const {
       tokenUser: { id: user_id, name: user_name, email: user_email },
       meetup: {
-        dataValues: {
-          id: meetup_id,
-          title,
-          date,
-          host: {
-            dataValues: { name: host_name, email: host_email },
-          },
+        dataValues: { id: meetup_id, title, date },
+        User: {
+          dataValues: { name: host_name, email: host_email },
         },
       },
     } = req;
@@ -45,18 +42,18 @@ class SignupController {
       return res.status(400).json({ error: 'User already sign up!' });
     }
 
-    const meetups = await Signup.findAll({
+    const meetup = await Signup.findOne({
       where: { user_id },
       include: [
         {
           model: Meetup,
-          as: 'meetup',
-          where: { date: { [Op.eq]: date } },
+          required: true,
+          where: { date },
         },
       ],
     });
 
-    if (meetups.length !== 0) {
+    if (meetup) {
       return res.status(400).json({ error: 'Meetup with conflict date!' });
     }
 
@@ -69,7 +66,6 @@ class SignupController {
         user_name,
         user_email,
       },
-      text: `Olá, ${host_name}! O usuário ${user_name} está inscrito. Entre em contato pelo email ${user_email}. Equipe Meetapp.`,
     });
 
     const signup = await Signup.create({ user_id, meetup_id });
