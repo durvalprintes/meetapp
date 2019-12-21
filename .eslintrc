@@ -20,7 +20,7 @@
     "no-param-reassign": ["error", { "props": false }],
     "class-methods-use-this": [
       "error",
-      { "exceptMethods": ["check", "index", "store", "show", "edit", "remove"] }
+      { "exceptMethods": ["check", "index", "store", "show", "edit", "remove", "showMany"] }
     ]
   }
 }

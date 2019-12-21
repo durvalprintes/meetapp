@@ -7,8 +7,8 @@ import File from '../models/File';
 import User from '../models/User';
 
 class MeetupController {
-  async check(req, res, next) {
-    const meetup = await Meetup.findByPk(req.params.meetup, {
+  async check(req, res, next, id) {
+    const meetup = await Meetup.findByPk(id, {
       include: [{ model: User, as: 'host' }],
     });
     if (!meetup) {
@@ -26,15 +26,20 @@ class MeetupController {
 
   async index(req, res) {
     const { date, page = 1 } = req.query;
+    const whereClause = {};
 
-    const dtStart = startOfDay(parseISO(date));
-    const dtEnd = endOfDay(parseISO(date));
+    if (req.route.path.split('/')[2] === 'host') {
+      whereClause.user_id = req.tokenUser.id;
+    }
+
+    if (date) {
+      const dtStart = startOfDay(parseISO(date));
+      const dtEnd = endOfDay(parseISO(date));
+      whereClause.date = { [Op.between]: [dtStart, dtEnd] };
+    }
 
     const meetups = await Meetup.findAll({
-      where: {
-        user_id: req.tokenUser.id,
-        date: { [Op.between]: [dtStart, dtEnd] },
-      },
+      where: whereClause,
       attributes: ['id', 'title', 'description', 'location', 'date'],
       include: [
         {

@@ -31,11 +31,14 @@ routes.post('/files', upload.single('banner'), FileController.store);
 
 routes.param('meetup', MeetupController.check);
 routes.get('/meetups', MeetupController.index);
+routes.get('/meetups/host', MeetupController.index);
 routes.post('/meetups', MeetupController.store);
 routes.put('/meetups/:meetup', MeetupController.edit);
 routes.delete('/meetups/:meetup', MeetupController.remove);
 
-routes.get('/signups/', SignupController.index);
-routes.post('/meetups/:meetup/signup', SignupController.store);
+routes.get('/signups', SignupController.index);
+
+routes.post('/meetups/:meetup/signups', SignupController.store);
+routes.get('/meetups/:meetup/signups', SignupController.showMany);
 
 export default routes;

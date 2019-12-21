@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 
 import Signup from '../models/Signup';
 import Meetup from '../models/Meetup';
+import User from '../models/User';
 
 import Mail from '../../lib/Mail';
 
@@ -18,6 +19,28 @@ class SignupController {
         },
       ],
       order: [[{ model: Meetup, as: 'meetup' }, 'date', 'DESC']],
+    });
+    return res.json({ signups });
+  }
+
+  async showMany(req, res) {
+    const {
+      meetup: {
+        dataValues: { id: meetup_id },
+      },
+    } = req;
+
+    const signups = await Signup.findAll({
+      where: { meetup_id },
+      attributes: ['id'],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'email'],
+        },
+      ],
+      order: [[{ model: User, as: 'user' }, 'name', 'ASC']],
     });
     return res.json({ signups });
   }

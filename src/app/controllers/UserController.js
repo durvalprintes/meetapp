@@ -2,8 +2,8 @@ import * as Yup from 'yup';
 import User from '../models/User';
 
 class UserController {
-  async check(req, res, next) {
-    const user = await User.findByPk(req.params.user);
+  async check(req, res, next, id) {
+    const user = await User.findByPk(id);
     if (!user) {
       return res.status(400).json({ error: 'User not found!' });
     }
@@ -12,7 +12,10 @@ class UserController {
   }
 
   async index(req, res) {
-    const users = await User.findAll({ order: ['name'] });
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'email'],
+      order: ['name'],
+    });
     return res.json(users);
   }
 
