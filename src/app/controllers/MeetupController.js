@@ -9,7 +9,7 @@ import User from '../models/User';
 class MeetupController {
   async check(req, res, next, id) {
     const meetup = await Meetup.findByPk(id, {
-      include: [{ model: User, as: 'host' }],
+      include: [{ model: User }],
     });
     if (!meetup) {
       return res.status(400).json({ error: 'Meetup not exists!' });

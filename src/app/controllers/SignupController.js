@@ -19,7 +19,7 @@ class SignupController {
           required: true,
         },
       ],
-      order: [[Meetup, 'date']],
+      order: [[Meetup, 'date', 'DESC']],
     });
     return res.json(signups);
   }
@@ -37,11 +37,10 @@ class SignupController {
       include: [
         {
           model: User,
-          as: 'user',
           attributes: ['id', 'name', 'email'],
         },
       ],
-      order: [[{ model: User, as: 'user' }, 'name', 'ASC']],
+      order: [[User, 'name', 'ASC']],
     });
     return res.json({ signups });
   }
