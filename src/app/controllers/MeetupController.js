@@ -44,13 +44,13 @@ class MeetupController {
       include: [
         {
           model: File,
-          as: 'banner',
           attributes: ['id', 'path', 'url'],
+          required: true,
         },
         {
           model: User,
-          as: 'host',
           attributes: ['id', 'name', 'email'],
+          required: true,
         },
       ],
       limit: 1,
@@ -79,9 +79,8 @@ class MeetupController {
     if (!(await File.findByPk(req.body.file_id))) {
       return res.status(400).json({ error: 'File not found!' });
     }
-
-    req.body.user_id = req.tokenUser.id;
-    const meetup = await Meetup.create(req.body);
+    const user_id = req.tokenUser.id;
+    const meetup = await Meetup.create({ ...req.body, user_id });
     return res.json(meetup);
   }
 
