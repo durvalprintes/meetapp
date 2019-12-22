@@ -12,7 +12,7 @@ import SignupController from './app/controllers/SignupController';
 const routes = Router();
 const upload = multer(uploadConfig);
 
-routes.get('/', (req, res) => res.json({ msg: 'Aplicação Meetup!' }));
+routes.get('/', (req, res) => res.json({ msg: 'Aplicação Meetapp!' }));
 
 routes.post('/login', LoginController);
 

@@ -26,34 +26,32 @@ class MeetupController {
 
   async index(req, res) {
     const { date, page = 1 } = req.query;
-    const whereClause = {};
+    const condition = {};
 
     if (req.route.path.split('/')[2] === 'host') {
-      whereClause.user_id = req.tokenUser.id;
+      condition.user_id = req.tokenUser.id;
     }
 
     if (date) {
       const dtStart = startOfDay(parseISO(date));
       const dtEnd = endOfDay(parseISO(date));
-      whereClause.date = { [Op.between]: [dtStart, dtEnd] };
+      condition.date = { [Op.between]: [dtStart, dtEnd] };
     }
 
     const meetups = await Meetup.findAll({
-      where: whereClause,
+      where: condition,
       attributes: ['id', 'title', 'description', 'location', 'date'],
       include: [
         {
           model: File,
           attributes: ['id', 'path', 'url'],
-          required: true,
         },
         {
           model: User,
           attributes: ['id', 'name', 'email'],
-          required: true,
         },
       ],
-      limit: 1,
+      limit: 10,
       offset: (page - 1) * 1,
     });
     return res.json(meetups);

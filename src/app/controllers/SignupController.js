@@ -16,10 +16,9 @@ class SignupController {
           model: Meetup,
           attributes: ['id', 'title', 'description', 'location', 'date'],
           where: { date: { [Op.gt]: new Date() } },
-          required: true,
         },
       ],
-      order: [[Meetup, 'date', 'DESC']],
+      order: [[Meetup, 'date', 'ASC']],
     });
     return res.json(signups);
   }
@@ -69,7 +68,6 @@ class SignupController {
       include: [
         {
           model: Meetup,
-          required: true,
           where: { date },
         },
       ],
