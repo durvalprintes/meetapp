@@ -40,5 +40,6 @@ routes.get('/signups', SignupController.index);
 
 routes.post('/meetups/:meetup/signups', SignupController.store);
 routes.get('/meetups/:meetup/signups', SignupController.showMany);
+routes.delete('/meetups/:meetup/signups', SignupController.remove);
 
 export default routes;

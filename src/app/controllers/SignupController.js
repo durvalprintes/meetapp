@@ -1,5 +1,7 @@
 import { Op } from 'sequelize';
 
+import { startOfMinute, endOfMinute } from 'date-fns';
+
 import Signup from '../models/Signup';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
@@ -63,12 +65,15 @@ class SignupController {
       return res.status(400).json({ error: 'User already sign up!' });
     }
 
+    const dtStart = startOfMinute(date);
+    const dtEnd = endOfMinute(date);
+
     const meetup = await Signup.findOne({
       where: { user_id },
       include: [
         {
           model: Meetup,
-          where: { date },
+          where: { date: { [Op.between]: [dtStart, dtEnd] } },
         },
       ],
     });
@@ -90,6 +95,24 @@ class SignupController {
 
     const signup = await Signup.create({ user_id, meetup_id });
     return res.json(signup);
+  }
+
+  async remove(req, res) {
+    console.log('AQUI');
+    const {
+      tokenUser: { id: user_id },
+      meetup: {
+        dataValues: { id: meetup_id },
+      },
+    } = req;
+
+    const signup = await Signup.findOne({ where: { user_id, meetup_id } });
+    if (!signup) {
+      return res.status(400).json({ error: 'User is not signup in this Meetup!' });
+    }
+
+    await signup.destroy();
+    return res.json({ msg: 'Ok' });
   }
 }
 
